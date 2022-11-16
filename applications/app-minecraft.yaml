@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minecraft-server
+  namespace: argocd 
+spec:
+  destination:
+    namespace: minecraft-server
+    server: https://kubernetes.default.svc
+  project: argo-cd-ready-applications
+  source:
+    path: charts/minecraft
+    repoURL: https://github.com/itzg/minecraft-server-charts.git
+    targetRevision: minecraft-4.4.0
+    helm:
+      values: | 
+        minecraftServer:
+          eula: "TRUE"
+          version: "LATEST"
+          type: "PAPER"
+          viewDistance: 64
+          memory: "8G"
+          serviceType: "LoadBalancer"
+          onlineMode: false
+          DIFFICULTY: "normal"
+        persistence:
+          dataDir:
+            enabled: true
+            Size: 10Gi
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
