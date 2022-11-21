@@ -18,8 +18,8 @@ spec:
           eula: "TRUE"
           version: "LATEST"
           type: "PAPER"
-          viewDistance: 64
-          memory: "8G"
+          viewDistance: 32
+          memory: "16G"
           serviceType: "LoadBalancer"
           onlineMode: false
           DIFFICULTY: "normal"
