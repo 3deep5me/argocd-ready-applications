@@ -1,0 +1,59 @@
+# Install the smb-csi-driver
+# Attention you need to configure a Storage class and a cred secret
+# For Examples see below
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: smb-csi-driver
+  namespace: argocd
+spec:
+  destination:
+    namespace: csi-smb-system
+    server: https://kubernetes.default.svc
+  project: argo-cd-ready-applications
+  source:
+    path: charts/v1.9.0/csi-driver-smb
+    repoURL: https://github.com/kubernetes-csi/csi-driver-smb.git
+    targetRevision: v1.9.0
+    helm:
+      values: | 
+        controller:
+          nodeSelector:
+            kubernetes.io/os: "linux"
+            node-role.kubernetes.io/master: "true"
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
+# Example Storage Class
+#     apiVersion: storage.k8s.io/v1
+#     kind: StorageClass
+#     metadata:
+#       name: smb
+#       annotations:
+#         storageclass.kubernetes.io/is-default-class: "false"
+#     provisioner: smb.csi.k8s.io
+#     parameters:
+#       source: "//192.168.2.28/g/k8s" #ip of the server
+#       # if csi.storage.k8s.io/provisioner-secret is provided, will create a sub directory
+#       # with PV name under source
+#       csi.storage.k8s.io/provisioner-secret-name: "smbcreds"
+#       csi.storage.k8s.io/provisioner-secret-namespace: "csi-smb-system"
+#       csi.storage.k8s.io/node-stage-secret-name: "smbcreds"
+#       csi.storage.k8s.io/node-stage-secret-namespace: "csi-smb-system"
+#     reclaimPolicy: Delete  # available values: Delete, Retain
+#     volumeBindingMode: Immediate
+#     mountOptions:
+#       - dir_mode=0777
+#       - file_mode=0777
+#       - uid=1001
+#       - gid=1001
+# Example Secret
+#     apiVersion: v1
+#     data:
+#       password: eHh4
+#       username: eHh4
+#     kind: Secret
+#     metadata:
+#       name: smbcreds
+#       namespace: csi-smb-system
