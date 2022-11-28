@@ -1,0 +1,19 @@
+# Install the sctl k8s with smb storage
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sctl
+  namespace: argocd
+spec:
+  destination:
+    namespace: sctl
+    server: https://kubernetes.default.svc
+  project: argo-cd-ready-applications
+  source:
+    path: k8s/base
+    repoURL: https://github.com/3deep5me/scdl-container-image.git
+    targetRevision: main 
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true

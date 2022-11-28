@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: velero
+  namespace: argocd 
+spec:
+  destination:
+    namespace: backup-velero
+    server: https://kubernetes.default.svc
+  project: argo-cd-ready-applications
+  source:
+    path: charts/velero
+    repoURL: https://github.com/vmware-tanzu/helm-charts.git
+    targetRevision: velero-2.32.3
+    helm:
+      values: | 
+        initContainers:
+           - name: velero-plugin-for-csi
+             image: velero/velero-plugin-for-csi:v0.3.2
+             imagePullPolicy: IfNotPresent
+             volumeMounts:
+               - mountPath: /target
+                 name: plugins
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
