@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pi-hole
+  namespace: argocd
+spec:
+  destination:
+    namespace: pi-hole
+    server: https://kubernetes.default.svc
+  project: argo-cd-ready-applications
+  sources:
+    - repoURL: https://mojo2600.github.io/pihole-kubernetes/
+      targetRevision: x.x.x
+      chart: pihole
+      helm:
+        values: |
+          serviceDns:
+            type: ClusterIP
+          serviceDhcp:
+            enabled: false
+  syncPolicy:
+    automated:
+      prune: true 
+      selfHeal: true 
+    syncOptions:
+    - CreateNamespace=true

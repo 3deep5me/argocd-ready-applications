@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: treafik-gateway-api-for-k3s-single-node-udp-53
+  namespace: argocd
+spec:
+  destination:
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+  project: argo-cd-ready-applications
+  sources:
+    - repoURL: https://traefik.github.io/charts
+      targetRevision: x.x.x
+      chart: traefik
+      helm:
+        values: |
+          additionalArguments:
+            - "--entryPoints.udp.address=:53/udp"
+          deployment:
+            podAnnotations:
+              prometheus.io/port: "8082"
+              prometheus.io/scrape: "true"
+          providers:
+            kubernetesGateway:
+              enabled: true
+          gateway:
+            namespacePolicy: All
+          priorityClassName: "system-cluster-critical"
+          tolerations:
+          - key: "CriticalAddonsOnly"
+            operator: "Exists"
+          - key: "node-role.kubernetes.io/control-plane"
+            operator: "Exists"
+            effect: "NoSchedule"
+          - key: "node-role.kubernetes.io/master"
+            operator: "Exists"
+            effect: "NoSchedule"
+          service:
+            ipFamilyPolicy: "PreferDualStack"
+  syncPolicy:
+    automated:
+      prune: true 
+      selfHeal: true 
+    syncOptions:
+    - CreateNamespace=true
