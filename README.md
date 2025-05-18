@@ -3,8 +3,7 @@ ready to use argo-cd application with build-in best-practices to get full applic
 
 ## Requierments
 * Kubernetes Cluster e.g. k3s
-* [Argo-CD](https://github.com/argoproj/argo-cd/blob/v2.5.2/manifests/ha/install.yaml)
-
+* [Argo-CD](https://github.com/argoproj/argo-cd/blob/master/manifests/install.yaml)
 ## Quick-Start
 1. Connect to your kubernetes-cluster (Get Kubeconfig, etc.)
 2. Clone this repo `git clone https://github.com/3deep5me/argo-cd-ready-applications.git` and change directory
